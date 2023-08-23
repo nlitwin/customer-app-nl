@@ -21,7 +21,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <pre>{JSON.stringify(data)}</pre>
+        <p>{JSON.stringify(data, null, 2)}</p>
         <input type="file" name="file" onChange={onChange} />
       </header>
     </div>
