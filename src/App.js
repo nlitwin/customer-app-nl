@@ -6,7 +6,8 @@ function App() {
     const formData = new FormData()
     formData.append("file", file)
 
-    fetch("http://localhost:3000/v2/seals/verify", {
+    fetch("https://titanstage.herokuapp.com/v2/seals/verify", {
+      // fetch("http://localhost:3000/v2/seals/verify", {
       method: "POST",
       body: formData,
       // headers: {
