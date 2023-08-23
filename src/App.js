@@ -1,6 +1,8 @@
+import { useState } from "react"
 import "./App.css"
 
 function App() {
+  const [data, setData] = useState(null)
   const onChange = (event) => {
     const file = event.target.files[0]
     const formData = new FormData()
@@ -10,21 +12,16 @@ function App() {
       // fetch("http://localhost:3000/v2/seals/verify", {
       method: "POST",
       body: formData,
-      // headers: {
-      //   "Content-Type": "application/json",
-      // },
     })
-      .then((resp) => {
-        // console.log(resp)
-        resp.json()
-      })
-      .then((result) => console.log("success: ", result))
+      .then((resp) => resp.json())
+      .then(setData)
       .catch((err) => console.error("Error: ", err))
   }
 
   return (
     <div className="App">
       <header className="App-header">
+        <pre>{JSON.stringify(data)}</pre>
         <input type="file" name="file" onChange={onChange} />
       </header>
     </div>
