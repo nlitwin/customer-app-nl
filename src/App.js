@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css"
 
 function App() {
+  const onChange = (event) => {
+    const file = event.target.files[0]
+    const formData = new FormData()
+    formData.append("file", file)
+
+    fetch("http://localhost:3000/v2/seals/verify", {
+      method: "POST",
+      body: formData,
+      // headers: {
+      //   "Content-Type": "application/json",
+      // },
+    })
+      .then((resp) => {
+        // console.log(resp)
+        resp.json()
+      })
+      .then((result) => console.log("success: ", result))
+      .catch((err) => console.error("Error: ", err))
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <input type="file" name="file" onChange={onChange} />
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
