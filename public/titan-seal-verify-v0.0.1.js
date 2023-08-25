@@ -10309,48 +10309,66 @@
 
 	Dropzone.autoDiscover = false;
 
-	const dropzoneElement = "#titan-seal-verify";
-	const defaultMessage =
-	  "Drag any Titan Sealed document here to verify that it was registered on the Blockchain.";
-	if (
-	  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-	    navigator.userAgent
-	  )
-	) {
-	  defaultMessage =
-	    "Tap here to choose a Titan Sealed document to verify that it was registered on the Blockchain.";
-	}
+	const dropzoneRootId = "titan-seal-verify";
+	const dropzoneRootElement = `#${dropzoneRootId}`;
 
-	waitForElementToDisplay(dropzoneElement, initializeDropzone);
-
-	function waitForElementToDisplay(
-	  selector,
-	  callback,
-	  checkFrequencyInMs = 1000,
-	  timeoutInMs = 9000
-	) {
-	  const startTimeInMs = Date.now()
+	function waitForTitanSealDropzoneElement(callback) {
+	  const checkInterval = 200;
+	  const timeout = 5000;
+	  const startTime = Date.now()
 	  ;(function loopSearch() {
-	    if (document.querySelector(selector) != null) {
+	    if (document.getElementById(dropzoneRootId)) {
 	      callback();
 
 	      return
 	    } else {
 	      setTimeout(function () {
-	        if (timeoutInMs && Date.now() - startTimeInMs > timeoutInMs) {
+	        if (Date.now() - startTime > timeout) {
+	          console.error(`Timed out after ${timeout / 1000} seconds trying to find root element: ${dropzoneRootElement}`);
 	          return
 	        }
 
 	        loopSearch();
-	      }, checkFrequencyInMs);
+	      }, checkInterval);
 	    }
 	  })();
 	}
 
 	function initializeDropzone() {
-	  new Dropzone(dropzoneElement, {
-	    url: "https://titanstage.herokuapp.com/v2/seals/verify",
+	  const rootElement = document.getElementById(dropzoneRootId);
+	  const clientId = rootElement.getAttribute("data-client-id");
+	  const apiKey = rootElement.getAttribute("data-api-key");
+
+	  if (clientId !== "titanseal.com") {
+	    if (!clientId) {
+	      console.error(
+	        'No client ID found on root element. Please add your client ID as a data attribute on the root element: <div id="titan-seal-verify" data-client-id="example.com">'
+	      );
+
+	      return
+	    }
+
+	    if (!apiKey) {
+	      console.error(
+	        'No API key found on root element. Please add your API key as a data attribute on the root element: <div id="titan-seal-verify" data-api-key="123abc456def">'
+	      );
+
+	      return
+	    }
+	  }
+
+	  const defaultMessage = "Drag any Titan Sealed document here to verify that it was registered on the Blockchain.";
+	  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+	    defaultMessage = "Tap here to choose a Titan Sealed document to verify that it was registered on the Blockchain.";
+	  }
+
+	  new Dropzone(dropzoneRootElement, {
+	    url: "http://localhost:3000/v2/seals/verify",
 	    dictDefaultMessage: defaultMessage,
+	    headers: {
+	      "X-Client-ID": clientId,
+	      "X-API-Key": apiKey,
+	    },
 	    acceptedFiles: "application/pdf",
 	    init: function () {
 	      this.on("success", function (_file, response) {
@@ -10362,5 +10380,7 @@
 	    },
 	  });
 	}
+
+	waitForTitanSealDropzoneElement(initializeDropzone);
 
 })();
