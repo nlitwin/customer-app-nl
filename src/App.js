@@ -23,7 +23,7 @@ function App() {
       <header className="App-header">
         {/* <p>{JSON.stringify(data, null, 2)}</p> */}
         <div className="dropzone-wrapper">
-          <div className="dropzone" id="titan-seal-verify" data-api-key="123" data-client-id="other.com"></div>
+          <div className="dropzone" id="titan-seal-verify" data-api-key="123" data-client-id="titanseal.com"></div>
         </div>
         {/* <br />
         <br />
