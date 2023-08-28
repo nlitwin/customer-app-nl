@@ -10394,8 +10394,8 @@
 	  }
 
 	  new Dropzone(rootElement.firstChild, {
-	    url: "http://localhost:3000/v2/seals/verify",
-	    // url: "https://titanstage.herokuapp.com/v2/seals/verify",
+	    // url: "http://localhost:3000/v2/seals/verify",
+	    url: "https://titanstage.herokuapp.com/v2/seals/verify",
 	    dictDefaultMessage: defaultMessage,
 	    headers: {
 	      "X-Client-ID": clientId,
