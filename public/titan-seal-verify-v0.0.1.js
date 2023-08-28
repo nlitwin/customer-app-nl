@@ -10309,22 +10309,22 @@
 
 	Dropzone.autoDiscover = false;
 
-	const dropzoneRootId = "titan-seal-verify";
-	const dropzoneRootElement = `#${dropzoneRootId}`;
+	const rootId = "titan-seal-verify";
+	const rootElement = `#${rootId}`;
 
 	function waitForTitanSealDropzoneElement(callback) {
 	  const checkInterval = 200;
 	  const timeout = 5000;
 	  const startTime = Date.now()
 	  ;(function loopSearch() {
-	    if (document.getElementById(dropzoneRootId)) {
+	    if (document.getElementById(rootId)) {
 	      callback();
 
 	      return
 	    } else {
 	      setTimeout(function () {
 	        if (Date.now() - startTime > timeout) {
-	          console.error(`Timed out after ${timeout / 1000} seconds trying to find root element: ${dropzoneRootElement}`);
+	          console.error(`Timed out after ${timeout / 1000} seconds trying to find root element: ${rootElement}`);
 	          return
 	        }
 
@@ -10334,8 +10334,39 @@
 	  })();
 	}
 
+	function insertPostUploadHTML({ status, seal }) {
+	  const { created_at, filename } = seal;
+	  let formattedStatus;
+	  let description = `There is no record of ${filename}.`;
+	  const dropzoneElement = document.getElementById(rootId);
+
+	  if (status.startsWith("verified")) {
+	    formattedStatus = "success";
+	    description = `${filename} was Titan Sealed on ${created_at}.`;
+	  } else if (status.startsWith("revoked")) {
+	    formattedStatus = "revoked";
+	    description = `${filename} has been revoked.`;
+	  } else if (status === "processing") {
+	    formattedStatus = "success";
+	    description = `${filename} is currently processing.`;
+	  }
+
+	  const htmlString = `<div class="verify-result-wrapper">
+    <div class="verify-result ${formattedStatus}">
+      <div class="verify-result__icon"></div>
+      <div class="verify-result__content">${description}</div>
+    </div>
+  </div>`;
+
+	  dropzoneElement.innerHTML = htmlString;
+	}
+
 	function initializeDropzone() {
-	  const rootElement = document.getElementById(dropzoneRootId);
+	  const rootElement = document.getElementById(rootId);
+	  const dropzoneRootElement = document.createElement("div");
+	  dropzoneRootElement.classList.add("dropzone");
+	  rootElement.appendChild(dropzoneRootElement);
+
 	  const clientId = rootElement.getAttribute("data-client-id");
 	  const apiKey = rootElement.getAttribute("data-api-key");
 
@@ -10362,8 +10393,9 @@
 	    defaultMessage = "Tap here to choose a Titan Sealed document to verify that it was registered on the Blockchain.";
 	  }
 
-	  new Dropzone(dropzoneRootElement, {
-	    url: "https://titanstage.herokuapp.com/v2/seals/verify",
+	  new Dropzone(rootElement.firstChild, {
+	    url: "http://localhost:3000/v2/seals/verify",
+	    // url: "https://titanstage.herokuapp.com/v2/seals/verify",
 	    dictDefaultMessage: defaultMessage,
 	    headers: {
 	      "X-Client-ID": clientId,
@@ -10372,10 +10404,7 @@
 	    acceptedFiles: "application/pdf",
 	    init: function () {
 	      this.on("success", function (_file, response) {
-	        console.log("response: ", response);
-	        // document.getElementsByClassName("dropzone-wrapper")[0].innerHTML = response.content;
-
-	        // document.getElementsByClassName("note") = response.content;
+	        insertPostUploadHTML(response);
 	      });
 	    },
 	  });
