@@ -34,7 +34,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div id="titan-seal-verify" data-api-key="123" data-client-id="titanseal.com" data-env="staging"></div>
+        <div
+          id="titan-seal-verify"
+          data-api-key="123"
+          data-client-id="titanseal.com"
+          data-env="staging"
+          data-domain-allowlist="titanseal3.com, titanseal.com,titanseal2.com"
+        ></div>
         {/* <p>Custom UI code hitting the Titan Seal API directly</p>
         <input type="file" onChange={handleChange} />
         <p>Result of upload:</p>
