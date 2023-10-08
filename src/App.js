@@ -39,7 +39,7 @@ function App() {
           data-api-key="123"
           data-client-id="titanseal.com"
           data-env="staging"
-          data-domain-allowlist="titanseal3.com, titanseal.com,titanseal2.com"
+          data-domain-allowlist="utahcounty.gov"
         ></div>
         {/* <p>Custom UI code hitting the Titan Seal API directly</p>
         <input type="file" onChange={handleChange} />
